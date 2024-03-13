@@ -1,12 +1,20 @@
-* {
+*{
     box-sizing: border-box;
     padding: 0;
     margin: 0;
 }
+:root {
+    --color-yellow: #ffcd02;
+    --color-darkBlue: #003060;
+    --color-white: #ddd;
+    --color-black: #000;
+}
+
 body{
     background-image: url('/images/kanto_route.webp');
     background-size: cover;
     background-repeat: no-repeat;
+    color: var(--color-darkBlue);
     font-family: 'Press Start 2P', cursive;
     font-size: 9px;
     display: flex;
@@ -17,11 +25,11 @@ body{
 }
 
 .title {
-    color: #ffcd02;
-    text-shadow: #003060 1px 5px 3px;
+    color: var(--color-yellow);
+    text-shadow: var(--color-darkBlue) 1px 5px 3px;
     font-size: 30px;
     letter-spacing: 3px;
-    margin: 20px 0;
+    margin: 30px 0;
 }
 
 .pokemon-container  {
@@ -33,58 +41,65 @@ body{
 }
 
 button {
-    margin-top: 10px;
-    line-height: 40px;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 50px;
+    line-height: 35px;
     font-weight: bold;
-    font-size: large;
-    color: #003060;
+    font-size: 16px;
+    color: var(--color-darkBlue);
     padding: 0 40px;
-    background: #ffcd02;
-    border: 3px solid #003060;
-    border-radius: 40px;
+    background: var(--color-yellow);
+    border: 3px solid var(--color-darkBlue);
+    border-radius: 8px;
     box-shadow: 0 5px 20px 3px rgba(0, 0, 0, 0.6);
     transition: background-color .4s ease;
 }
 
 button:hover {
-    background: #003060;
-    color: #ffcd02;
+    background: var(--color-darkBlue);
+    color: var(--color-yellow);
     position: relative;
     top: 2px;
     box-shadow: none;
   }
 
   .pokemon {
-    background-color: #eee;
-    border-radius: 10px;
-    box-shadow: 0 3px 15px #000;
-    margin: 15px;
-    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 3px 15px var(--color-black);
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 150px;
+    position: relative;
+  }
+  .pokemon>div {
+    text-align: center;
+    transition: transform 0.3s;
+    backface-visibility: hidden;
+    cursor: pointer;
   }
 
   .pokemon .img-container {
-    background-color: rgba(255, 255, 255, 0.6);
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
     text-align: center;
   }
   
   .pokemon .img-container img {
-    max-width: 100%;
-    margin-top: 20px;
+    max-width: 90%;
+    filter: drop-shadow(0px 0px 5px black);
+    margin-top: -10px;
+    -webkit-user-drag: none;
   }
   
   .pokemon .info {
     margin-top: 20px;
-    color: #003060;
-  }
+}
   
   .pokemon .info .number {
     background-color: rgba(0, 0, 0, 0.1);
     padding: 5px 10px;
-    border-radius: 10px;
     font-size: 0.8em;
   }
   
@@ -93,12 +108,12 @@ button:hover {
     letter-spacing: 1px;
   }
 
-.height .weight {
-    margin: 10px 0;
+.height {
+    margin: 1px 0;
   }
 
   .weight {
-    margin: 10px 0;
+    margin: 7px 0;
   }
 
 
@@ -110,10 +125,6 @@ button:hover {
     transform: scale(1.1);
   }
 
-  .pokemon {
-    position: relative;
-  }
-
   .pokemon .back {
     position: absolute;
     top: 0px;
@@ -121,3 +132,28 @@ button:hover {
     right: 0px;
     bottom: 0px;
   }
+
+  .idPoke {
+    display: flex;
+    justify-content: end;
+    margin: 5px 0;
+  }
+
+  .stats {
+    display: flex;
+    flex-direction: column;
+}
+
+.pokemon-pagination {
+    color: red;
+}
+
+@media screen and (max-width: 768px) {
+    .pokemon-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .title {
+        text-align: center;
+    }
+}
