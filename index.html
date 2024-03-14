@@ -10,13 +10,17 @@
     />
   </head>
   <body>
+    <div id="loading" class="loading">
+      <img src="./images/loading.gif" alt="Loading..." style="max-width: 250px;">
+  </div>
     <h1 class="title">Pokemon Gallery</h1>
     <div id="pokemon-gallery" class="pokemon-container">
     </div>
     <nav>
     <div class="pokemon-pagination">
-        <button id="prev">Prev</button> 
-        <button id="next">Next</button>
+        <button id="prev" class="pagination-button">Prev</button> 
+          <div id="pagination-numbers">1</div>
+        <button id="next" class="pagination-button">Next</button>
     </div>
   </nav> 
     <script src="app.js"></script>

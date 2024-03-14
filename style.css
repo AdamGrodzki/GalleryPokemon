@@ -146,6 +146,8 @@ button:hover {
 
 .pokemon-pagination {
     color: red;
+    display: flex;
+    flex-direction: row;
 }
 
 @media screen and (max-width: 768px) {
@@ -156,4 +158,11 @@ button:hover {
     .title {
         text-align: center;
     }
+}
+
+#loading {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
 }
