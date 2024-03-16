@@ -64,14 +64,52 @@ const getPokemon = async (id) => {
 };
 
 
-
 function removeChildNodes(parent) {
   while (parent.firstChild) {
     parent.removeChild(parent.firstChild);
   }
 }
 
-fetchPokemons();
+
+
+const pagesContainer = document.getElementById("pages-container")
+const pokemonPerPage = 20;
+const apiUrl = "https://pokeapi.co/api/v2/pokemon";
+
+const pokeRequest = ()=>{
+fetchPokemons(offset, pokemonPerPage);
+
+  fetch(apiUrl)
+  .then((response) => response.json())
+  .then((data)=>  {
+
+    pagesContainer.innerHTML = "";
+    totalPages= Math.ceil(data.count/pokemonPerPage); 
+    let currentPage = Math.ceil(offset/pokemonPerPage);
+
+    for ( let i=1; i<= totalPages; i++){
+      const pageBtn = document.createElement("button")
+      pageBtn.textContent = i;
+      
+      pageBtn.addEventListener("click", function () {
+        offset = (i-1)*pokemonPerPage+1;
+        removeChildNodes(pokemonGallery);
+        pokeRequest(`${apiUrl}"offset="${offset}"&limit=20"`)
+      })
+
+      if(i ==  currentPage){
+        //make button active only when user is on that page 
+        pageBtn.classList.add("active")
+      }
+      
+      pagesContainer.appendChild(pageBtn)
+    }
+  })
+
+}
+
+pokeRequest();
+
 
 const createPokemonCard = (pokemon) => {
   const pokemonEl = document.createElement("div");
