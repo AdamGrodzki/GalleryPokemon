@@ -1,32 +1,45 @@
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pokemon Galley API</title>
-    <link rel="stylesheet" href="style.css" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
 
-    <div id="loading" class="loading">
-      <img src="./images/loading.gif" alt="Loading..." style="max-width: 250px;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokemon Galley API</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+  <h1 class="title">Pokemon Gallery</h1>
+  <div id="pokemon-gallery">
   </div>
 
-    <h1 class="title">Pokemon Gallery</h1>
-    <div id="pokemon-gallery"></div>
-  
-    <div id="pagination-container">
-      <div class="pagination">
-        <button id="prev">Prev</button> 
-        <button id="next">Next</button>
+  <div id="pagination-container">
+    <div class="pagination">
+      <button id="prev">Prev</button>
+      <button id="next">Next</button>
+    </div>
+
+    <!-- <div id="pages-container"></div> -->
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span id="close" class="close">&times;</span>
+      <h2 id="modal-title"></h2>
+      <div id="modal-stats">
+        <img id="modal-img" src="" alt="">
+        <p class="bold-info">Height: <span id="modal-height"></span></p>
+        <p class="bold-info">Weight: <span id="modal-weight"></span></p>
+        <p class="bold-info">Type: <span id="modal-type"></span></p>
       </div>
 
-      <div id="pages-container"></div>
     </div>
-  
-    <script src="app.js"></script>
-  </body>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
 </html>
+
+<!-- dialog instead div modal -->
