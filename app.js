@@ -45,19 +45,31 @@ prevBtn.addEventListener('click', () => {
 nextBtn.addEventListener('click', () => {
   offset += 20;
   removeChildNodes(pokemonGallery)
-  fetchPokemons(offset, limit)
+  fetchPokemons(offset, limit);
 });
-
-
 
 const fetchPokemons = async () => {
   for (let i = offset; i <= offset + limit; i++) {
     await getPokemon(i);
   }
+  // const idTable = [];
+  // const url = `https://pokeapi.co/api/v2/pokemon?limit=${pokemonPerPage}&offset=${offset}`;
+
+  // fetch(url)
+  //   .then((respone) => respone.json())
+  //   .then((data) => {
+  //     data.results.forEach((el) => {
+  //       idTable.push(el.url.spplit("/")[6]);
+  //     })
+  //   })
+  // idTable.forEach((el) => {
+  //   getPokemon(el)
+  // })
 };
 
 const getPokemon = async (id) => {
   const url = `https://pokeapi.co/api/v2/pokemon/${id}`;
+  // const url = `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=${limit}`;
   const res = await fetch(url);
   const data = await res.json();
   createPokemonCard(data)
@@ -70,37 +82,37 @@ const removeChildNodes = (parent) => {
   }
 }
 
-const pokeRequest = () => {
-  fetchPokemons(offset, pokemonPerPage);
+// const pokeRequest = () => {
+fetchPokemons();
 
-  fetch(apiUrl)
-    .then((response) => response.json())
-    .then((data) => {
+//   fetch(apiUrl)
+//     .then((response) => response.json())
+//     .then((data) => {
 
-      pagesContainer.innerHTML = "";
-      // totalPages = Math.ceil(data.count / pokemonPerPage);
-      totalPages = Math.ceil(151 / pokemonPerPage);
-      let currentPage = Math.ceil(offset / pokemonPerPage);
+//       pagesContainer.innerHTML = "";
+//       // totalPages = Math.ceil(data.count / pokemonPerPage);
+//       totalPages = Math.ceil(151 / pokemonPerPage);
+//       let currentPage = Math.ceil(offset / pokemonPerPage);
 
-      for (let i = 1; i <= totalPages; i++) {
-        const pageBtn = document.createElement("button")
-        pageBtn.textContent = i;
+//       for (let i = 1; i <= totalPages; i++) {
+//         const pageBtn = document.createElement("button")
+//         pageBtn.textContent = i;
 
-        pageBtn.addEventListener("click", function () {
-          offset = (i - 1) * pokemonPerPage + 1;
-          removeChildNodes(pokemonGallery);
-          pokeRequest(`${apiUrl}"offset="${offset}"&limit=20"`)
-        })
-        if (i == currentPage) {
-          //make button active only when user is on that page 
-          pageBtn.classList.add("active")
-        }
-        pagesContainer.appendChild(pageBtn)
-      }
-      console.log("data:", data)
-    })
-}
-pokeRequest();
+//         pageBtn.addEventListener("click", function () {
+//           offset = (i - 1) * pokemonPerPage + 1;
+//           removeChildNodes(pokemonGallery);
+//           pokeRequest(`${apiUrl}"offset="${offset}"&limit=20"`)
+//         })
+//         if (i == currentPage) {
+//           //make button active only when user is on that page 
+//           pageBtn.classList.add("active")
+//         }
+//         pagesContainer.appendChild(pageBtn)
+//       }
+//       console.log("data:", data)
+//     })
+// }
+// pokeRequest();
 
 const createPokemonCard = (pokemon) => {
   const pokemonEl = document.createElement("div");
@@ -123,27 +135,32 @@ const createPokemonCard = (pokemon) => {
   pokemonGallery.appendChild(pokemonEl);
 
   const closePokemonDetails = () => {
-    modal.style.display = "none"
+    modal.close();
   }
   close.addEventListener("click", closePokemonDetails)
 
   pokemonFrontEl.addEventListener("click", () => {
     showPokemonDetails(pokemon)
-    modal.style.display = "flex"
+    modal.showModal();
   });
 
-  console.log("offset: ", offset)
-  if (offset == 1) {
-    prevBtn.classList.add('hidden')
-  } else {
-    prevBtn.classList.remove('hidden')
-  }
+  modal.addEventListener("click", e => {
+    const dialogDimensions = modal.getBoundingClientRect()
+    if
+      (e.clientX < dialogDimensions.left ||
+      e.clientX > dialogDimensions.right ||
+      e.clientY < dialogDimensions.top ||
+      e.clientY > dialogDimensions.bottom
+    ) {
+      modal.close()
+    }
+  })
 
-  if (offset == 141) {
-    nextBtn.classList.add('hidden')
-  } else {
-    nextBtn.classList.remove('hidden')
-  }
+  console.log("offset: ", offset)
+
+  document.getElementById("prev").disabled = (offset === 1) ? true : false;
+
+  document.getElementById("next").disabled = (offset === 141) ? true : false;
 }
 
 const showPokemonDetails = (data) => {
@@ -159,11 +176,9 @@ const showPokemonDetails = (data) => {
   heightModal.textContent = (data.height / 10).toFixed(1) + "m";
   weightModal.textContent = (data.weight / 10) + "kg";
   typeModal.textContent = capitalize(mainTypes.find((type) => pokeTypes.indexOf(type) > -1));
-
-
-  modal.classList.add('show')
-  console.log("Show: ")
+  // typeModal.style.backgroundColor = colors[pokeTypes];
 }
+
 
 const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1)

@@ -17,7 +17,6 @@ body {
   background-repeat: no-repeat;
   color: var(--color-darkBlue);
   font-family: 'Press Start 2P', cursive;
-  font-size: 9px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,34 +159,32 @@ body {
 
 /* /* POP-UP THEME  */
 .modal {
-  display: none;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.6);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  padding: 0.5rem;
+  background-color: var(--color-yellow);
+  /* background-color: var(--color-darkBlue); */
+  border-radius: 8px;
 }
 
-.show {
-  display: flex;
+.modal::backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 /* POP-UP  */
 .modal-content {
-  background-color: white;
-  border: solid 3px black;
+  background-color: var(--color-white);
+  border: solid 5px var(--color-darkBlue);
+  /* border: solid 5px var(--color-yellow); */
   margin: auto;
   padding: 20px;
-  max-width: 600px
+  /* max-width: 600px; */
+  border-radius: 8px;
 }
 
 #modal-title {
-  /* display: flex; */
   font-size: 20px;
   font-weight: bold;
   text-align: center;
@@ -201,13 +198,14 @@ body {
   height: 160px;
   filter: drop-shadow(5px 5px 0px rgba(0, 0, 0, 0.5));
   -webkit-user-drag: none;
+  animation: pulse 1.5s linear infinite;
 }
 
 #modal-stats {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 #modal-stats p {
@@ -233,12 +231,6 @@ body {
   font-weight: bold;
 }
 
-.hidden {
-  pointer-events: none;
-  display: block;
-  cursor: not-allowed;
-}
-
 /* MEDIA QUERIES  */
 @media screen and (max-width: 768px) {
   #pokemon-gallery {
@@ -246,7 +238,40 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  #modal-title {
+    text-align: center;
+    font-size: 16px;
+  }
+
+  #modal-stats p {
+    font-size: 14px;
+  }
+
   .title {
     text-align: center;
+  }
+}
+
+button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+#modal-type {
+  border-radius: 5px;
+  padding: 5px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
   }
 }
