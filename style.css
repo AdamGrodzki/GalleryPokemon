@@ -26,7 +26,7 @@ body {
 
 .title {
   color: var(--color-yellow);
-  text-shadow: var(--color-darkBlue) 1px 5px 3px;
+  text-shadow: var(--color-darkBlue) 0px 5px 0px;
   font-size: 35px;
   letter-spacing: 3px;
   margin: 50px 0;
@@ -103,7 +103,6 @@ body {
   align-items: center;
   width: 160px;
   height: 160px;
-  /* cursor: pointer; */
   justify-content: center;
 }
 
@@ -191,6 +190,7 @@ body {
   margin-bottom: 20px;
   text-decoration: underline 3px var(--color-darkBlue);
   width: 350px;
+  color: var(--color-darkBlue);
 }
 
 #modal-img {
@@ -206,11 +206,16 @@ body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  color: var(--color-darkBlue);
 }
 
 #modal-stats p {
   margin: 7px 0px;
   font-size: 16px;
+}
+
+#modal-type {
+  border: outset 4px rgba(0, 0, 0, 0.2);
 }
 
 .close {

@@ -30,7 +30,7 @@ const colors = {
 
 const mainTypes = Object.keys(colors);
 
-let offset = 1;
+let offset = 0;
 let limit = 19;
 const pokemonPerPage = 20;
 
@@ -48,31 +48,32 @@ nextBtn.addEventListener('click', () => {
   fetchPokemons(offset, limit);
 });
 
+
 const fetchPokemons = async () => {
-  for (let i = offset; i <= offset + limit; i++) {
-    await getPokemon(i);
-  }
-  // const idTable = [];
-  // const url = `https://pokeapi.co/api/v2/pokemon?limit=${pokemonPerPage}&offset=${offset}`;
+  // for (let i = offset; i <= offset + limit; i++) {
+  //   await getPokemon(i);
+  // }
 
-  // fetch(url)
-  //   .then((respone) => respone.json())
-  //   .then((data) => {
-  //     data.results.forEach((el) => {
-  //       idTable.push(el.url.spplit("/")[6]);
-  //     })
-  //   })
-  // idTable.forEach((el) => {
-  //   getPokemon(el)
-  // })
-};
+  const idTable = [];
+  const url = `https://pokeapi.co/api/v2/pokemon?limit=${pokemonPerPage}&offset=${offset}`;
 
+  const response = await fetch(url);
+  const data = await response.json()
+
+  data.results.forEach((el) => {
+    idTable.push(el.url.split("/")[6]);
+  })
+  console.log("IdTable:", idTable)
+  idTable.forEach((el) => {
+    getPokemon(el)
+  })
+}
 const getPokemon = async (id) => {
   const url = `https://pokeapi.co/api/v2/pokemon/${id}`;
-  // const url = `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=${limit}`;
-  const res = await fetch(url);
-  const data = await res.json();
+  const response = await fetch(url);
+  const data = await response.json();
   createPokemonCard(data)
+  // console.log("data", data)
 };
 
 
@@ -81,10 +82,8 @@ const removeChildNodes = (parent) => {
     parent.removeChild(parent.firstChild);
   }
 }
-
-// const pokeRequest = () => {
 fetchPokemons();
-
+// const pokeRequest = () => {
 //   fetch(apiUrl)
 //     .then((response) => response.json())
 //     .then((data) => {
@@ -119,9 +118,10 @@ const createPokemonCard = (pokemon) => {
   pokemonEl.classList.add("pokemon");
 
   const name = pokemon.name.toUpperCase();
-  const pokeTypes = pokemon.types.map((type) => type.type.name);
-  const type = mainTypes.find((type) => pokeTypes.indexOf(type) > -1);
+  const type = pokemon.types[0].type.name;
   const color = colors[type];
+
+  console.log("type", type)
 
   pokemonEl.style.backgroundColor = color;
 
@@ -156,11 +156,10 @@ const createPokemonCard = (pokemon) => {
     }
   })
 
-  console.log("offset: ", offset)
+  // console.log("offset: ", offset)
 
-  document.getElementById("prev").disabled = (offset === 1) ? true : false;
-
-  document.getElementById("next").disabled = (offset === 141) ? true : false;
+  document.getElementById("prev").disabled = (offset === 0) ? true : false;
+  document.getElementById("next").disabled = (offset === 140) ? true : false;
 }
 
 const showPokemonDetails = (data) => {
@@ -169,18 +168,21 @@ const showPokemonDetails = (data) => {
   const heightModal = document.getElementById('modal-height');
   const weightModal = document.getElementById('modal-weight');
   const typeModal = document.getElementById('modal-type');
-  const pokeTypes = data.types.map((type) => type.type.name);
+  const pokeTypes = capitalize(data.types[0].type.name);
+  const typeColor = colors[data.types[0].type.name];
+
+  console.log("pokeTypes: ", pokeTypes)
 
   titleModal.textContent = `#${data.id.toString().padStart(3, 0)} ${capitalize(data.name)}`;
   imgModal.src = data.sprites.front_default;
   heightModal.textContent = (data.height / 10).toFixed(1) + "m";
   weightModal.textContent = (data.weight / 10) + "kg";
-  typeModal.textContent = capitalize(mainTypes.find((type) => pokeTypes.indexOf(type) > -1));
-  // typeModal.style.backgroundColor = colors[pokeTypes];
+  typeModal.textContent = pokeTypes;
+  typeModal.style.backgroundColor = typeColor;
 }
-
 
 const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
+// buttony prev i next bazuja na offset "disabled
