@@ -5,7 +5,6 @@ const nextBtn = document.getElementById("next");
 const modal = document.getElementById("modal");
 const close = document.getElementById("close");
 
-const apiUrl = "https://pokeapi.co/api/v2/pokemon";
 
 const colors = {
   normal: '#A8A77A',
@@ -31,58 +30,28 @@ const colors = {
 const mainTypes = Object.keys(colors);
 
 let offset = 0;
-let limit = 19;
 const pokemonPerPage = 20;
 
 prevBtn.addEventListener('click', () => {
   if (offset > 1) {
     offset -= 20;
     removeChildNodes(pokemonGallery);
-    fetchPokemons(offset, limit)
+    createPokemonCard(offset)
   }
 });
 
 nextBtn.addEventListener('click', () => {
   offset += 20;
   removeChildNodes(pokemonGallery)
-  fetchPokemons(offset, limit);
+  createPokemonCard(offset);
 });
-
-
-const fetchPokemons = async () => {
-  // for (let i = offset; i <= offset + limit; i++) {
-  //   await getPokemon(i);
-  // }
-
-  const idTable = [];
-  const url = `https://pokeapi.co/api/v2/pokemon?limit=${pokemonPerPage}&offset=${offset}`;
-
-  const response = await fetch(url);
-  const data = await response.json()
-
-  data.results.forEach((el) => {
-    idTable.push(el.url.split("/")[6]);
-  })
-  console.log("IdTable:", idTable)
-  idTable.forEach((el) => {
-    getPokemon(el)
-  })
-}
-const getPokemon = async (id) => {
-  const url = `https://pokeapi.co/api/v2/pokemon/${id}`;
-  const response = await fetch(url);
-  const data = await response.json();
-  createPokemonCard(data)
-  // console.log("data", data)
-};
-
 
 const removeChildNodes = (parent) => {
   while (parent.firstChild) {
     parent.removeChild(parent.firstChild);
   }
 }
-fetchPokemons();
+// fetchPokemons();
 // const pokeRequest = () => {
 //   fetch(apiUrl)
 //     .then((response) => response.json())
@@ -113,70 +82,85 @@ fetchPokemons();
 // }
 // pokeRequest();
 
-const createPokemonCard = (pokemon) => {
-  const pokemonEl = document.createElement("div");
-  pokemonEl.classList.add("pokemon");
+const createPokemonCard = async (offset) => {
+  const idTable = [];
+  const url = `https://pokeapi.co/api/v2/pokemon?limit=${pokemonPerPage}&offset=${offset}`;
 
-  const name = pokemon.name.toUpperCase();
-  const type = pokemon.types[0].type.name;
-  const color = colors[type];
+  const response = await fetch(url);
+  const data = await response.json()
 
-  console.log("type", type)
-
-  pokemonEl.style.backgroundColor = color;
-
-  const pokemonFrontEl = document.createElement('div');
-  pokemonFrontEl.innerHTML = `
-  <p class="name">${name} </p>
-  `;
-
-  pokemonEl.appendChild(pokemonFrontEl);
-
-  pokemonGallery.appendChild(pokemonEl);
-
-  const closePokemonDetails = () => {
-    modal.close();
-  }
-  close.addEventListener("click", closePokemonDetails)
-
-  pokemonFrontEl.addEventListener("click", () => {
-    showPokemonDetails(pokemon)
-    modal.showModal();
+  data.results.forEach((el) => {
+    idTable.push(el.url.split("/")[6]);
   });
 
-  modal.addEventListener("click", e => {
-    const dialogDimensions = modal.getBoundingClientRect()
-    if
-      (e.clientX < dialogDimensions.left ||
-      e.clientX > dialogDimensions.right ||
-      e.clientY < dialogDimensions.top ||
-      e.clientY > dialogDimensions.bottom
-    ) {
-      modal.close()
+  for (let i = 0; i < pokemonPerPage; i++) {
+    const pokemonEl = document.createElement("div");
+    pokemonEl.classList.add("pokemon");
+
+    const name = data.results[i].name;
+
+    const pokemonFrontEl = document.createElement("div");
+    pokemonFrontEl.innerHTML = `
+    <p class="name">${capitalize(name)} </p>
+  `;
+    pokemonEl.appendChild(pokemonFrontEl);
+    pokemonGallery.appendChild(pokemonEl);
+
+    const closePokemonDetails = () => {
+      modal.close();
     }
-  })
+    close.addEventListener("click", closePokemonDetails)
 
-  // console.log("offset: ", offset)
+    pokemonFrontEl.addEventListener("click", () => {
+      showPokemonDetails(data.results[i].url);
+      modal.showModal();
+    });
 
-  document.getElementById("prev").disabled = (offset === 0) ? true : false;
-  document.getElementById("next").disabled = (offset === 140) ? true : false;
-}
+    modal.addEventListener("click", e => {
+      const dialogDimensions = modal.getBoundingClientRect()
+      if
+        (e.clientX < dialogDimensions.left ||
+        e.clientX > dialogDimensions.right ||
+        e.clientY < dialogDimensions.top ||
+        e.clientY > dialogDimensions.bottom
+      ) {
+        modal.close()
+      }
+    });
+  }
+  console.log("offset: ", offset)
 
-const showPokemonDetails = (data) => {
+  const lastPage = Math.ceil(data.count / 20) * 20;
+  console.log("lastPage: ", lastPage)
+
+
+
+  document.getElementById("prev").disabled = (data.previous === null) ? true : false;
+  // document.getElementById("next").disabled = (data.next === `https://pokeapi.co/api/v2/pokemon?offset=${data.count}&limit=2`) ? true : false;
+  document.getElementById("next").disabled = (data.next === null || data.next <= lastPage) ? true : false;
+
+
+  // console.log("dataPrev", data.previous)
+  console.log("dataNext", data.next)
+};
+
+const showPokemonDetails = async (pokemonUrl) => {
+  const response = await fetch(pokemonUrl);
+  const pokemonData = await response.json();
+  
   const titleModal = document.getElementById("modal-title");
   const imgModal = document.getElementById('modal-img');
   const heightModal = document.getElementById('modal-height');
   const weightModal = document.getElementById('modal-weight');
   const typeModal = document.getElementById('modal-type');
-  const pokeTypes = capitalize(data.types[0].type.name);
-  const typeColor = colors[data.types[0].type.name];
+  const pokeTypes = capitalize(pokemonData.types[0].type.name);
+  const typeColor = colors[pokemonData.types[0].type.name];
 
-  console.log("pokeTypes: ", pokeTypes)
 
-  titleModal.textContent = `#${data.id.toString().padStart(3, 0)} ${capitalize(data.name)}`;
-  imgModal.src = data.sprites.front_default;
-  heightModal.textContent = (data.height / 10).toFixed(1) + "m";
-  weightModal.textContent = (data.weight / 10) + "kg";
+  titleModal.textContent = `#${pokemonData.id.toString().padStart(3, 0)} ${capitalize(pokemonData.name)}`;
+  imgModal.src = pokemonData.sprites.front_default;
+  heightModal.textContent = (pokemonData.height / 10).toFixed(1) + "m";
+  weightModal.textContent = (pokemonData.weight / 10) + "kg";
   typeModal.textContent = pokeTypes;
   typeModal.style.backgroundColor = typeColor;
 }
@@ -185,4 +169,4 @@ const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-// buttony prev i next bazuja na offset "disabled
+createPokemonCard();
