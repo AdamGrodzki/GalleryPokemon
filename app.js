@@ -93,7 +93,7 @@ const createPokemonCard = async (offset) => {
     idTable.push(el.url.split("/")[6]);
   });
 
-  for (let i = 0; i < pokemonPerPage; i++) {
+  for (let i = 0; i < data.results.length; i++) {
     const pokemonEl = document.createElement("div");
     pokemonEl.classList.add("pokemon");
 
@@ -128,26 +128,15 @@ const createPokemonCard = async (offset) => {
       }
     });
   }
-  console.log("offset: ", offset)
-
-  const lastPage = Math.ceil(data.count / 20) * 20;
-  console.log("lastPage: ", lastPage)
-
-
-
   document.getElementById("prev").disabled = (data.previous === null) ? true : false;
-  // document.getElementById("next").disabled = (data.next === `https://pokeapi.co/api/v2/pokemon?offset=${data.count}&limit=2`) ? true : false;
-  document.getElementById("next").disabled = (data.next === null || data.next <= lastPage) ? true : false;
+  document.getElementById("next").disabled = (data.next === null) ? true : false;
 
-
-  // console.log("dataPrev", data.previous)
-  console.log("dataNext", data.next)
 };
 
 const showPokemonDetails = async (pokemonUrl) => {
   const response = await fetch(pokemonUrl);
   const pokemonData = await response.json();
-  
+
   const titleModal = document.getElementById("modal-title");
   const imgModal = document.getElementById('modal-img');
   const heightModal = document.getElementById('modal-height');
