@@ -106,9 +106,15 @@ const createPokemonCard = async (offset) => {
     pokemonEl.appendChild(pokemonFrontEl);
     pokemonGallery.appendChild(pokemonEl);
 
+    let imgModal;
+
     const closePokemonDetails = () => {
       modal.close();
+      if (imgModal) {
+        imgModal.src = '';
+      }
     }
+
     close.addEventListener("click", closePokemonDetails)
 
     pokemonFrontEl.addEventListener("click", () => {
@@ -124,13 +130,12 @@ const createPokemonCard = async (offset) => {
         e.clientY < dialogDimensions.top ||
         e.clientY > dialogDimensions.bottom
       ) {
-        modal.close()
+        closePokemonDetails();
       }
     });
   }
   document.getElementById("prev").disabled = (data.previous === null) ? true : false;
   document.getElementById("next").disabled = (data.next === null) ? true : false;
-
 };
 
 const showPokemonDetails = async (pokemonUrl) => {
@@ -138,7 +143,7 @@ const showPokemonDetails = async (pokemonUrl) => {
   const pokemonData = await response.json();
 
   const titleModal = document.getElementById("modal-title");
-  const imgModal = document.getElementById('modal-img');
+  imgModal = document.getElementById('modal-img');
   const heightModal = document.getElementById('modal-height');
   const weightModal = document.getElementById('modal-weight');
   const typeModal = document.getElementById('modal-type');
@@ -147,13 +152,18 @@ const showPokemonDetails = async (pokemonUrl) => {
 
 
   titleModal.textContent = `#${pokemonData.id.toString().padStart(3, 0)} ${capitalize(pokemonData.name)}`;
-  imgModal.src = pokemonData.sprites.front_default;
+  // imgModal.src = pokemonData.sprites.front_default;
+  if (!pokemonData.sprites.front_default) {
+    imgModal.src = "https://c7.alamy.com/comp/GDP4MB/no-pokemon-here-sign-GDP4MB.jpg";
+  } else {
+    imgModal.src = pokemonData.sprites.front_default;
+  }
   heightModal.textContent = (pokemonData.height / 10).toFixed(1) + "m";
   weightModal.textContent = (pokemonData.weight / 10) + "kg";
   typeModal.textContent = pokeTypes;
   typeModal.style.backgroundColor = typeColor;
-}
 
+}
 const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }

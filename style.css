@@ -4,6 +4,7 @@
   margin: 0;
 }
 
+
 :root {
   --color-yellow: #ffcd02;
   --color-darkBlue: #003060;
@@ -84,7 +85,7 @@ body {
   display: flex;
   text-align: center;
   flex-wrap: wrap;
-  font-size: 15px;
+  font-size: 0.78rem;
   cursor: pointer;
   position: relative;
 }
@@ -96,6 +97,7 @@ body {
   place-items: center;
   margin: 0 auto;
   gap: 1rem 1.5rem;
+  /* height: 80vh; */
 }
 
 #pokemon-gallery .pokemon {
@@ -163,6 +165,11 @@ body {
   color: var(--color-yellow);
 }
 
+button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 /* /* POP-UP THEME  */
 .modal {
   position: absolute;
@@ -200,6 +207,7 @@ body {
 }
 
 #modal-img {
+  margin-bottom: 10px;
   width: 160px;
   height: 160px;
   filter: drop-shadow(5px 5px 0px rgba(0, 0, 0, 0.5));
@@ -222,6 +230,8 @@ body {
 
 #modal-type {
   border: outset 4px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 5px;
 }
 
 .close {
@@ -258,21 +268,16 @@ body {
     font-size: 14px;
   }
 
+  .modal {
+    position: fixed;
+  }
+
   .title {
     text-align: center;
   }
 }
 
-button:disabled {
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-#modal-type {
-  border-radius: 5px;
-  padding: 5px;
-}
-
+/* KEY FRAMES */
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -287,6 +292,7 @@ button:disabled {
   }
 }
 
+/* ANIMATION FOR TEXT NAME CARD  */
 .name::before {
   content: '';
   position: absolute;
