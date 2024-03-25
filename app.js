@@ -106,20 +106,24 @@ const createPokemonCard = async (offset) => {
     pokemonEl.appendChild(pokemonFrontEl);
     pokemonGallery.appendChild(pokemonEl);
 
-    let imgModal;
+
+    let currentPokemonUrl = null;
 
     const closePokemonDetails = () => {
+      const imgModal = document.getElementById("modal-img");
+      imgModal.src = "./images/pokeball.gif";
       modal.close();
-      if (imgModal) {
-        imgModal.src = '';
-      }
     }
 
     close.addEventListener("click", closePokemonDetails)
 
     pokemonFrontEl.addEventListener("click", () => {
-      showPokemonDetails(data.results[i].url);
-      modal.showModal();
+      if (currentPokemonUrl !== data.results[i].url) {
+        closePokemonDetails();
+        showPokemonDetails(data.results[i].url);
+        modal.showModal();
+        currentPokemonUrl = data.results[i].url;
+      }
     });
 
     modal.addEventListener("click", e => {
@@ -131,6 +135,7 @@ const createPokemonCard = async (offset) => {
         e.clientY > dialogDimensions.bottom
       ) {
         closePokemonDetails();
+        currentPokemonUrl = null;
       }
     });
   }
@@ -143,7 +148,7 @@ const showPokemonDetails = async (pokemonUrl) => {
   const pokemonData = await response.json();
 
   const titleModal = document.getElementById("modal-title");
-  imgModal = document.getElementById('modal-img');
+  const imgModal = document.getElementById('modal-img');
   const heightModal = document.getElementById('modal-height');
   const weightModal = document.getElementById('modal-weight');
   const typeModal = document.getElementById('modal-type');
@@ -152,17 +157,11 @@ const showPokemonDetails = async (pokemonUrl) => {
 
 
   titleModal.textContent = `#${pokemonData.id.toString().padStart(3, 0)} ${capitalize(pokemonData.name)}`;
-  // imgModal.src = pokemonData.sprites.front_default;
-  if (!pokemonData.sprites.front_default) {
-    imgModal.src = "https://c7.alamy.com/comp/GDP4MB/no-pokemon-here-sign-GDP4MB.jpg";
-  } else {
-    imgModal.src = pokemonData.sprites.front_default;
-  }
+  imgModal.src = pokemonData.sprites.front_default ? pokemonData.sprites.front_default : "./images/notFoundPokemon.gif";
   heightModal.textContent = (pokemonData.height / 10).toFixed(1) + "m";
   weightModal.textContent = (pokemonData.weight / 10) + "kg";
   typeModal.textContent = pokeTypes;
   typeModal.style.backgroundColor = typeColor;
-
 }
 const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1)
