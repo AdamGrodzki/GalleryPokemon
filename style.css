@@ -31,6 +31,7 @@ body {
   font-size: 35px;
   letter-spacing: 3px;
   margin: 50px 0;
+  height: 3vh;
 }
 
 /* // BUTTONS NEXT & PREV  */
@@ -112,7 +113,9 @@ body {
   background-image: url("./images/poke_background_icon.png");
   background-repeat: no-repeat;
   background-size: cover;
+  transition: trasform 0.3s;
 }
+
 #pokemon-gallery .pokemon:hover {
   transform: scale(1.1);
 }
@@ -278,6 +281,7 @@ body .modal-open {
 
   .title {
     text-align: center;
+    height: 6vh;
   }
 }
 
