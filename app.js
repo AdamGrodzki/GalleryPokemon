@@ -3,14 +3,13 @@ const pagesContainer = document.getElementById("pages-container");
 const prevBtn = document.getElementById("prev");
 const nextBtn = document.getElementById("next");
 const modal = document.getElementById("modal");
-const close = document.getElementById("close");
+const closeButton = document.getElementById("closeButton");
 
-let titleModal = document.getElementById("modal-title");
-let imgModal = document.getElementById('modal-img');
-let heightModal = document.getElementById('modal-height');
-let weightModal = document.getElementById('modal-weight');
-let typeModal = document.getElementById('modal-type');
-
+const modalTitle = document.getElementById("modal-title");
+const modalImg = document.getElementById('modal-img');
+const modalHeight = document.getElementById('modal-height');
+const modalWeight = document.getElementById('modal-weight');
+const modalType = document.getElementById('modal-type');
 
 const colors = {
   normal: '#A8A77A',
@@ -38,18 +37,28 @@ const mainTypes = Object.keys(colors);
 let offset = 0;
 const pokemonPerPage = 20;
 
+const closePokemonDetails = () => {
+  modalImg.src = "./images/pokeball.gif";
+  modalTitle.textContent = "";
+  modalHeight.textContent = "";
+  modalWeight.textContent = "";
+  modalType.textContent = "";
+  modalType.style.backgroundColor = "";
+  modal.close();
+}
+
 prevBtn.addEventListener('click', () => {
   if (offset > 1) {
-    offset -= 20;
+    offset -= pokemonPerPage;
     removeChildNodes(pokemonGallery);
-    createPokemonCard(offset)
+    createPokemonList(offset)
   }
 });
 
 nextBtn.addEventListener('click', () => {
-  offset += 20;
+  offset += pokemonPerPage;
   removeChildNodes(pokemonGallery)
-  createPokemonCard(offset);
+  createPokemonList(offset);
 });
 
 const removeChildNodes = (parent) => {
@@ -57,90 +66,71 @@ const removeChildNodes = (parent) => {
     parent.removeChild(parent.firstChild);
   }
 }
-const createPokemonCard = async (offset) => {
-  const idTable = [];
-  const url = `https://pokeapi.co/api/v2/pokemon?limit=${pokemonPerPage}&offset=${offset}`;
 
-  const response = await fetch(url);
-  const data = await response.json()
+const createPokemonList = async (offset) => {
+  try {
+    const url = `https://pokeapi.co/api/v2/pokemon?limit=${pokemonPerPage}&offset=${offset}`;
+    const response = await fetch(url);
+    const data = await response.json();
 
-  data.results.forEach((el) => {
-    idTable.push(el.url.split("/")[6]);
-  });
+    data.results.forEach((pokemon) => {
+      const pokemonEl = document.createElement("div");
+      pokemonEl.classList.add("pokemon");
 
-  for (let i = 0; i < data.results.length; i++) {
-    const pokemonEl = document.createElement("div");
-    pokemonEl.classList.add("pokemon");
+      const pokemonFrontEl = document.createElement("div");
+      pokemonFrontEl.innerHTML = `
+        <p class="name">${capitalize(pokemon.name)} </p>
+      `;
+      pokemonEl.appendChild(pokemonFrontEl);
+      pokemonGallery.appendChild(pokemonEl);
 
-    const name = data.results[i].name;
-
-    const pokemonFrontEl = document.createElement("div");
-    pokemonFrontEl.innerHTML = `
-    <p class="name">${capitalize(name)} </p>
-  `;
-    pokemonEl.appendChild(pokemonFrontEl);
-    pokemonGallery.appendChild(pokemonEl);
-
-
-    let currentPokemonUrl = null;
-
-    const closePokemonDetails = () => {
-      imgModal.src = "./images/pokeball.gif";
-      titleModal.textContent = " ";
-      heightModal.textContent = " ";
-      weightModal.textContent = " ";
-      typeModal.textContent = " ";
-      typeModal.style.backgroundColor = " ";
-      modal.close();
-    }
-
-    close.addEventListener("click", closePokemonDetails)
-
-    pokemonFrontEl.addEventListener("click", () => {
-      if (currentPokemonUrl !== data.results[i].url) {
-        closePokemonDetails();
-        showPokemonDetails(data.results[i].url);
-        modal.showModal();
-        currentPokemonUrl = data.results[i].url;
-      }
+      pokemonFrontEl.addEventListener("click", () => {
+        showPokemonDetails(pokemon.url);
+      });
     });
 
-    modal.addEventListener("click", e => {
-      const dialogDimensions = modal.getBoundingClientRect()
-      if
-        (e.clientX < dialogDimensions.left ||
-        e.clientX > dialogDimensions.right ||
-        e.clientY < dialogDimensions.top ||
-        e.clientY > dialogDimensions.bottom
-      ) {
-        closePokemonDetails();
-        currentPokemonUrl = null;
-      }
-    });
+    prevBtn.disabled = !data.previous;
+    nextBtn.disabled = !data.next;
+
+  } catch (error) {
+    console.error("Error fetching Pokémon list: ", error);
   }
-  document.getElementById("prev").disabled = (data.previous === null) ? true : false;
-  document.getElementById("next").disabled = (data.next === null) ? true : false;
+  modal.addEventListener("click", e => {
+    const dialogDimensions = modal.getBoundingClientRect();
+    if (
+      e.clientX < dialogDimensions.left ||
+      e.clientX > dialogDimensions.right ||
+      e.clientY < dialogDimensions.top ||
+      e.clientY > dialogDimensions.bottom
+    ) {
+      closePokemonDetails();
+      currentPokemonUrl = null;
+    }
+  });
+  closeButton.addEventListener("click", closePokemonDetails);
 };
 
+
+
 const showPokemonDetails = async (pokemonUrl) => {
+  try {
+    const response = await fetch(pokemonUrl);
+    const pokemonData = await response.json();
 
-  const response = await fetch(pokemonUrl);
-  const pokemonData = await response.json();
+    const pokeTypes = capitalize(pokemonData.types[0].type.name);
+    const typeColor = colors[pokemonData.types[0].type.name];
 
-  const pokeTypes = capitalize(pokemonData.types[0].type.name);
-  const typeColor = colors[pokemonData.types[0].type.name];
+    modalTitle.textContent = `#${pokemonData.id.toString().padStart(3, 0)} ${capitalize(pokemonData.name)}`;
+    modalImg.src = pokemonData.sprites.front_default ? pokemonData.sprites.front_default : "./images/notFoundPokemon.gif";
+    modalHeight.textContent = (pokemonData.height / 10).toFixed(1) + "m";
+    modalWeight.textContent = (pokemonData.weight / 10) + "kg";
+    modalType.textContent = pokeTypes;
+    modalType.style.backgroundColor = typeColor;
 
-
-  titleModal.textContent = `#${pokemonData.id.toString().padStart(3, 0)} ${capitalize(pokemonData.name)}`;
-  imgModal.src = pokemonData.sprites.front_default ? pokemonData.sprites.front_default : "./images/notFoundPokemon.gif";
-  heightModal.textContent = (pokemonData.height / 10).toFixed(1) + "m";
-  weightModal.textContent = (pokemonData.weight / 10) + "kg";
-  typeModal.textContent = pokeTypes;
-  typeModal.style.backgroundColor = typeColor;
-
+    modal.showModal();
+  } catch (error) {
+    console.error("Error fetching Pokémon details: ", error);
+  }
 }
-const capitalize = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1)
-}
 
-createPokemonCard();
+createPokemonList(offset);

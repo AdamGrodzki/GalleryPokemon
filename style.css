@@ -199,6 +199,7 @@ body .modal-open {
   margin: auto;
   padding: 20px;
   border-radius: 8px;
+  cursor: pointer;
 }
 
 #modal-title {
